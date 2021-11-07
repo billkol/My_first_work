@@ -134,6 +134,8 @@ class MyWidget(QMainWindow, Ui_MainWindow):
 
     def reminder(self):
         for i in self.list_1:
+            if i[0] == '01.09.' + i[0].split('.')[2]:  # pashalka
+                self.pashalka()  # pashalka
             if self.count == 0 and i[1] == self.time_now:
                 self.list_lokal.append(True)
         if len(self.list_lokal) > 0:
@@ -152,6 +154,13 @@ class MyWidget(QMainWindow, Ui_MainWindow):
             self.rem.show()
         else:
             self.rem.close()
+
+    def pashalka(self):  # pashalka
+        self.pas_halka = pashalka()  # pashalka
+        for n, i in enumerate(self.list_1):  # pashalka
+            if i[2] == 'создатель':  # pashalka
+                self.pas_halka.show()  # pashalka
+                del self.list_1[n]  # pashalka
 
 
 class Window_reminder(QWidget):
@@ -283,6 +292,25 @@ class Window_reminder(QWidget):
                 self.list_1[num][1] = self.list_1[num][1].split(':')[0] + ':' + str(
                     int(self.list_1[num][1].split(':')[1]) + 5)
             self.ex.update()
+
+
+class pashalka(QWidget):  # pashalka
+    def __init__(self):  # pashalka
+        super(pashalka, self).__init__()  # pashalka
+        self.setWindowTitle('pashalka')  # pashalka
+        self.setGeometry(400, 200, 600, 300)  # pashalka
+        self.text = QLabel(self)  # pashalka
+        self.text.setText('Биография создателя\n'  # pashalka
+                          '\n01.09.2005 - родился\n'  # pashalka
+                          '01.09.2008 - пошёл в садик\n'  # pashalka
+                          '01.09.2012 - пошёл в школу\n'  # pashalka
+                          '01.09.2020 - поступил в Яндекс Лицей изучать'  # pashalka
+                          ' язык программирования Python\n'  # pashalka
+                          '01.09.2021 - начал разработку первого проекта\n'  # pashalka
+                          '01.09.2025 - поступил в Политех\n'  # pashalka
+                          '01.09.2030 - изобрел вечный двигатель\n'  # pashalka
+                          '01.09.2035 - награжден Нобелевской премией\n'  # pashalka
+                          '\nпродолжение следует\n')  # pashalka
 
 
 if __name__ == '__main__':
