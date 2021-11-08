@@ -72,6 +72,7 @@ class MyWidget(QMainWindow, Ui_MainWindow):
         self.pushButton_2.clicked.connect(self.delet)
         self.pushButton_3.clicked.connect(self.search)
         self.pushButton_4.clicked.connect(self.update)
+        self.lineEdit.setText('созатель')  # pashalka
         self.time_start = ':'.join(str(time.ctime()).split()[3].split(':')[:2])
         self.list_lokal = []
         self.count = 0
