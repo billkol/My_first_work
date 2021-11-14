@@ -1,4 +1,5 @@
 import sys
+import csv
 import time
 from random import randint
 import threading
@@ -64,7 +65,12 @@ class Ui_MainWindow(object):
 class MyWidget(QMainWindow, Ui_MainWindow):
     def __init__(self):
         global list_1
+        list_reminder = open('list_reminder.txt', 'r', encoding='utf-8')
+        list_reminder = list_reminder.read()
+        list_reminder = list_reminder.split('\n')
         self.list_1 = list_1
+        for i in list_reminder[1:]:
+            self.list_1.append(i.split(' | '))
         super(MyWidget, self).__init__()
         self.setupUi(self)
         self.setWindowTitle('Mini-planner+')
@@ -72,13 +78,14 @@ class MyWidget(QMainWindow, Ui_MainWindow):
         self.pushButton_2.clicked.connect(self.delet)
         self.pushButton_3.clicked.connect(self.search)
         self.pushButton_4.clicked.connect(self.update)
-        self.lineEdit.setText('созатель')  # pashalka
+        self.lineEdit.setText('создатель')  # pashalka
         self.time_start = ':'.join(str(time.ctime()).split()[3].split(':')[:2])
         self.list_lokal = []
         self.count = 0
         self.timer = QTimer(self)
         self.timer.timeout.connect(self.timer_2)
         self.timer.start(1000)
+        self.update()
 
     def initUi(self):
         pass  # без этого не работает
@@ -92,8 +99,7 @@ class MyWidget(QMainWindow, Ui_MainWindow):
             self.list_1.append([data, time, text_event])
             self.list_1.sort()
             self.listWidget.clear()
-            for i in self.list_1:
-                self.listWidget.addItem(str(i[0]) + ' (' + str(i[1]) + ') - ' + str(i[2]))
+            self.update()
 
     def delet(self):
         if self.lineEdit.text():
@@ -108,8 +114,7 @@ class MyWidget(QMainWindow, Ui_MainWindow):
                 del self.list_1[num]
                 self.list_1.sort()
                 self.listWidget.clear()
-                for i in self.list_1:
-                    self.listWidget.addItem(str(i[0]) + ' (' + str(i[1]) + ') - ' + str(i[2]))
+                self.update()
 
     def search(self):
         list_search = []
@@ -123,10 +128,17 @@ class MyWidget(QMainWindow, Ui_MainWindow):
 
     def update(self):
         self.list_1.sort()
+        list_copy = self.list_1.copy()
         self.listWidget.clear()
         for i in self.list_1:
             self.listWidget.addItem(str(i[0]) + ' (' + str(i[1]) + ') - ' + str(i[2]))
         self.list_lokal.clear()
+        list_reminder = open('list_reminder.txt', 'w', encoding='utf-8')
+        list_reminder.write('date | time | reminder')
+        for i in self.list_1:
+            list_reminder.write('\n')
+            list_reminder.write(' | '.join(i))
+        list_reminder.close()
 
     def timer_2(self):
         Current_Time = QTime.currentTime()
@@ -224,30 +236,30 @@ class Window_reminder(QWidget):
                 if int(self.list_1[num][1].split(':')[0]) == 23:
                     if int(self.list_1[num][0].split('.')[1]) in [1, 3, 5, 7, 8, 10]:
                         if int(self.list_1[num][0].split('.')[2]) == 31:
-                            self.list_1[num][0] = self.list_1[num][0].split('.')[0] + '.' + \
-                                                  str(int(self.list_1[num][0].split('.')[1]) + 1)\
-                                                  + '.01'
-                            self.list_1[num][1] = '00:' + str(
+                            self.list_1[num][0] = '01.' + \
+                                                  str(int(self.list_1[num][0].split('.')[1]) + 1
+                                                      ) + '.' + self.list_1[num][0].split('.')[0]
+                            self.list_1[num][1] = '00:0' + str(
                                 int(self.list_1[num][0].split(':')[1]) - 55)
                         else:
                             self.list_1[num][0] = self.list_1[num][0].split('.')[0] + '.' + \
                                                   self.list_1[num][0].split('.')[1] + '.' + \
                                                   str(int(self.list_1[num][0].split('.')[1]) + 1)
-                            self.list_1[num][1] = '00:' + str(
-                                int(self.list_1[num][0].split(':')[1]) - 55)
+                            self.list_1[num][1] = '00:0' + str(
+                                int(self.list_1[num][1].split(':')[1]) - 55)
                     elif int(self.list_1[num][0].split('.')[1]) in [4, 6, 9, 11]:
                         if int(self.list_1[num][0].split('.')[2]) == 30:
-                            self.list_1[num][0] = self.list_1[num][0].split('.')[0] + '.' + \
-                                                  str(int(self.list_1[num][0].split('.')[1]) + 1) \
-                                                  + '.01'
-                            self.list_1[num][1] = '00:' + str(
-                                int(self.list_1[num][0].split(':')[1]) - 55)
+                            self.list_1[num][0] = '01.' + \
+                                                  str(int(self.list_1[num][0].split('.')[1]) + 1
+                                                      ) + '.' + self.list_1[num][0].split('.')[0]
+                            self.list_1[num][1] = '00:0' + str(
+                                int(self.list_1[num][1].split(':')[1]) - 55)
                         else:
                             self.list_1[num][0] = self.list_1[num][0].split('.')[0] + '.' + \
                                                   self.list_1[num][0].split('.')[1] + '.' + \
                                                   str(int(self.list_1[num][0].split('.')[1]) + 1)
-                            self.list_1[num][1] = '00:' + str(
-                                int(self.list_1[num][0].split(':')[1]) - 55)
+                            self.list_1[num][1] = '00:0' + str(
+                                int(self.list_1[num][1].split(':')[1]) - 55)
                     elif int(self.list_1[num][0].split('.')[1]) == 2:
                         if (int(self.list_1[num][0].split('.')[0]) / 4 ==
                                 int(self.list_1[num][0].split('.')[0]) // 4 and
@@ -256,39 +268,39 @@ class Window_reminder(QWidget):
                                 (int(self.list_1[num][0].split('.')[0]) / 400 ==
                                  int(self.list_1[num][0].split('.')[0]) // 400):
                             if int(self.list_1[num][0].split('.')[2]) == 29:
-                                self.list_1[num][0] = self.list_1[num][0].split('.')[0] + '.' + \
-                                                      str(int(self.list_1[num][0].split('.')[1])
-                                                          + 1) + '.01'
-                                self.list_1[num][1] = '00:' + str(
-                                    int(self.list_1[num][0].split(':')[1]) - 55)
+                                self.list_1[num][0] = '01.' + \
+                                                      str(int(self.list_1[num][0].split('.')[1]) + 1
+                                                          ) + '.' + self.list_1[num][0].split('.')[0]
+                                self.list_1[num][1] = '00:0' + str(
+                                    int(self.list_1[num][1].split(':')[1]) - 55)
                             else:
                                 self.list_1[num][0] = self.list_1[num][0].split('.')[0] + '.' + \
                                                       self.list_1[num][0].split('.')[1] + '.' + \
                                                       str(int(self.list_1[num][0].split('.')[1]) + 1)
-                                self.list_1[num][1] = '00:' + str(
-                                    int(self.list_1[num][0].split(':')[1]) - 55)
+                                self.list_1[num][1] = '00:0' + str(
+                                    int(self.list_1[num][1].split(':')[1]) - 55)
                         else:
                             if int(self.list_1[num][0].split('.')[2]) == 28:
-                                self.list_1[num][0] = self.list_1[num][0].split('.')[0] + '.' + \
-                                                      str(int(self.list_1[num][0].split('.')[1])
-                                                          + 1) + '.01'
-                                self.list_1[num][1] = '00:' + str(
-                                    int(self.list_1[num][0].split(':')[1]) - 55)
+                                self.list_1[num][0] = '01.' + \
+                                                      str(int(self.list_1[num][0].split('.')[1]) + 1
+                                                          ) + '.' + self.list_1[num][0].split('.')[0]
+                                self.list_1[num][1] = '00:0' + str(
+                                    int(self.list_1[num][1].split(':')[1]) - 55)
                             else:
                                 self.list_1[num][0] = self.list_1[num][0].split('.')[0] + '.' + \
                                                       self.list_1[num][0].split('.')[1] + '.' + \
                                                       str(int(self.list_1[num][0].split('.')[1]) + 1)
                                 self.list_1[num][1] = '00:' + str(
-                                    int(self.list_1[num][0].split(':')[1]) - 55)
+                                    int(self.list_1[num][1].split(':')[1]) - 55)
                     elif int(self.list_1[num][0].split('.')[1]) == 12:
                         if int(self.list_1[num][0].split('.')[2]) == 31:
-                            self.list_1[num][0] = str(int(self.list_1[num][0].split('.')[0]) + 1)\
-                                                  + '01.01'
-                            self.list_1[num][1] = '00:' + str(
+                            self.list_1[num][0] = '01.01' + \
+                                                  str(int(self.list_1[num][0].split('.')[0]) + 1)
+                            self.list_1[num][1] = '00:0' + str(
                                 int(self.list_1[num][0].split(':')[1]) - 55)
                 else:
-                    self.list_1[num][1] = str(int(self.list_1[num][1].split(':')[0]) + 1) \
-                                          + ':' + str(int(self.list_1[num][0].split(':')[1]) - 55)
+                    self.list_1[num][1] = str(int(self.list_1[num][1].split(':')[0]) + 1) + \
+                                          ':0' + str(int(self.list_1[num][1].split(':')[1]) - 55)
             else:
                 self.list_1[num][1] = self.list_1[num][1].split(':')[0] + ':' + str(
                     int(self.list_1[num][1].split(':')[1]) + 5)
