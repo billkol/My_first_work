@@ -65,6 +65,8 @@ class Ui_MainWindow(object):
 class MyWidget(QMainWindow, Ui_MainWindow):
     def __init__(self):
         global list_1
+        list_reminder = open('list_reminder.txt', 'w', encoding='utf-8')
+        list_reminder.write('date | time | reminder')
         list_reminder = open('list_reminder.txt', 'r', encoding='utf-8')
         list_reminder = list_reminder.read()
         list_reminder = list_reminder.split('\n')
